@@ -1,4 +1,5 @@
-const { blogs } = require('../model/index')
+const { blogs, users } = require('../model/index')
+const bcrypot = require('bcrypt')
 
 exports.editform = async (req, res) => {
     const blog = await blogs.findByPk(req.params.id)
@@ -17,10 +18,10 @@ exports.updateBlog = async (req, res) => {
     res.redirect('/blog/' + blog.id)
 }
 
-exports.homepage =async (req, res) =>{
-       const datas = await blogs.findAll()
-       res.render('home',{blogs :datas}) 
-    }
+exports.homepage = async (req, res) => {
+    const datas = await blogs.findAll()
+    res.render('home', { blogs: datas, session: req.session }) // <-- add session here
+}
 exports.singleBlog =async(req, res) => {
     const id =req.params.id
     const blog = await blogs.findByPk(id)
@@ -44,12 +45,12 @@ exports.registerform =(req, res) => {
  exports.loginform =(req, res) => {
     res.render('login.ejs')
 }
-exports.createBlog =async (req, res) => {
-    const filename =req.file.filename
-    const { title, subtitle, description } = req.body
-    await blogs.create({ title, subtitle, description,  image : filename})
-    res.send('blog added successfully')
- }
+exports.createBlog = async (req, res) => {
+    const { title, subtitle, description } = req.body;
+    const image = req.file ? req.file.filename : null;
+    await blogs.create({ title, subtitle, description, image });
+    res.redirect('/aauthorized');
+}
  exports.registeruse =async (req, res) =>{
   const { username, email, password } = req.body
  await users.create({
@@ -61,16 +62,28 @@ exports.createBlog =async (req, res) => {
  }
 
  exports.loginuse = async (req, res) => {
-     const { email, password } = req.body
-     const user = await users.findAll({ where: { email: email } })
-     if (user.length == 0) {
-         res.send('user not found')
-     } else {
-         const isMatched = bcrypot.compareSync(password, user[0].password)
-         if (isMatched) {
-             res.send('login successfully')
-         } else {
-             res.send('password not matched')
-         }
-     }
+    const { email, password } = req.body
+    const user = await users.findAll({ where: { email: email } })
+    if (user.length == 0) {
+        res.send('user not found')
+    } else {
+        const isMatched = bcrypot.compareSync(password, user[0].password)
+        if (isMatched) {
+            req.session.userId = user[0].id // set session
+            res.redirect('/aauthorized') // redirect instead of render
+        } else {
+            res.send('password not matched')
+        }
+    }
  }
+
+exports.showAuthorized = (req, res) => {
+    // Fetch blogs from your database or use an empty array if none
+    // Example with MongoDB/Mongoose:
+    // const blogs = await Blog.find({});
+    // res.render('aauthorized', { blogs });
+
+    // Example with in-memory array:
+    const blogs = []; // Replace with your actual data source
+    res.render('aauthorized', { blogs });
+};

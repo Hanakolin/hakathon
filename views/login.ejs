@@ -154,6 +154,9 @@
 
     <div class="form-container">
         <h2>login</h2>
+        <% if (typeof error !== 'undefined') { %>
+    <div style="color: red; text-align: center;"><%= error %></div>
+    <% } %>
         <form action="/login" method="POST" >
             
             <div class="form-group">
