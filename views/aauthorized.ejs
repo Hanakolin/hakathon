@@ -76,19 +76,36 @@
 
 </header>
 
+<main class="pt-24 pb-8">
+    <div class="container mx-auto flex flex-wrap justify-center">
+        <% if (blogs && blogs.length) { %>
+            <% blogs.forEach(function(blog){ %>
+                <div class="max-w-xs mx-auto overflow-hidden bg-white rounded-lg shadow-md mb-6 m-4">
+                    <div class="relative">
+                        <img 
+                            class="w-full h-64 object-cover" 
+                            src="<%= blog.image %>" 
+                            alt="Image"
+                        >
+                        <div class="absolute top-0 right-0">
+                            <!-- You can add badge or overlay content here if needed -->
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2"><%= blog.title %></h3>
+                        <p class="text-gray-700 text-base">
+                            <%= blog.description %>
+                        </p>
+                    </div>
+                    <a href="/blog/<%= blog.id %>">readmore</a>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p class="text-center w-full text-gray-500">No blogs found.</p>
+        <% } %>
+    </div>
+</main>
 
-<% blogs.forEach(function(blog){ %>
-  <div class="max-w-xs mx-auto overflow-hidden bg-white rounded-lg shadow-md mb-6">
-    <div class="relative">
-      <img class="w-full h-64 object-cover" src="<%= blog.image %>" alt="Image">
-    </div>
-    <div class="p-4">
-      <h3 class="text-xl font-semibold mb-2"><%= blog.title %></h3>
-      <p class="text-gray-700 text-base"><%= blog.description %></p>
-    </div>
-    <a href="/blog/<%= blog.id %>">readmore</a>
-  </div>
-<% }); %>
 
 
 

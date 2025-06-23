@@ -1,4 +1,4 @@
-const { blogs, users } = require('../model/index')
+const { blogs, users, } = require('../model/index')
 const bcrypot = require('bcrypt')
 
 exports.editform = async (req, res) => {
@@ -77,13 +77,8 @@ exports.createBlog = async (req, res) => {
     }
  }
 
-exports.showAuthorized = (req, res) => {
-    // Fetch blogs from your database or use an empty array if none
-    // Example with MongoDB/Mongoose:
-    // const blogs = await Blog.find({});
-    // res.render('aauthorized', { blogs });
-
-    // Example with in-memory array:
-    const blogs = []; // Replace with your actual data source
-    res.render('aauthorized', { blogs });
+exports.showAuthorized = async(req, res) => {
+    const blogList = await blogs.findAll({});
+    console.log('fetched blogs:', blogList);
+    res.render('aauthorized', { blogs: blogList });
 };
