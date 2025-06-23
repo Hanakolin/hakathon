@@ -1,5 +1,7 @@
 const { blogs, users, } = require('../model/index')
 const bcrypot = require('bcrypt')
+const fs = require('fs');
+const path = require('path');
 
 exports.editform = async (req, res) => {
     const blog = await blogs.findByPk(req.params.id)
@@ -8,14 +10,27 @@ exports.editform = async (req, res) => {
 }
 
 exports.updateBlog = async (req, res) => {
-    const blog = await blogs.findByPk(req.params.id)
-    if (!blog) return res.status(404).send('Blog not found')
-    blog.title = req.body.title
-    blog.subtitle = req.body.subtitle
-    blog.description = req.body.description
-    if (req.file) blog.image = req.file.path
-    await blog.save()
-    res.redirect('/blog/' + blog.id)
+    const blog = await blogs.findByPk(req.params.id);
+    if (!blog) return res.status(404).send('Blog not found');
+
+    blog.title = req.body.title;
+    blog.subtitle = req.body.subtitle;
+    blog.description = req.body.description;
+
+    // If a new image is uploaded, replace the old one
+    if (req.file) {
+        // Optionally delete the old image file
+        if (blog.image) {
+            const oldImagePath = path.join(__dirname, '..', 'storage', blog.image);
+            if (fs.existsSync(oldImagePath)) {
+                fs.unlinkSync(oldImagePath);
+            }
+        }
+        blog.image = req.file.filename; // Save new filename
+    }
+
+    await blog.save();
+    res.redirect('/blog/' + blog.id);
 }
 
 exports.homepage = async (req, res) => {

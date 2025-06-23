@@ -1,7 +1,6 @@
 const { homepage, createform, createBlog, singleBlog, deleteBlog, editform, updateBlog } = require("../controller/blogController")
 const router = require("express").Router()
-const { multer, storage } = require('../middleware/multerConfig')
-const upload = multer({ storage: storage })
+const upload = require('../middleware/upload');
 const isAuthenticated = require('../middleware/auth')
 
 router.get('/', homepage)
