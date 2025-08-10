@@ -49,7 +49,7 @@ exports.singleBlog =async(req, res) => {
                  id: id
              }
          })
-         res.redirect('/')
+         res.redirect('/aauthorized')
      }
 exports.createform = (req, res) => {
     res.render('creat.ejs')
